@@ -1,47 +1,35 @@
 import socket
 import threading
 
-nickname = input("choose a nickname")
+nickname = input("Choose a nickname: ")
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(('127.0.0.1' , 55555))
-
+client.connect(('127.0.0.1', 55555))
 
 def receive():
     while True:
-        client, address = server.accept()
-        print(f"connected with {address}")
-
         try:
-            client.send('NICKNAME'.encode('ascii'))
-            nickname = client.recv(1024).decode('utf-8')
-
-            if not nickname:
-                client.close()
-                continue
-
-            nicknames.append(nickname)
-            clients.append(client)
-
-            print(f"nickname of the client is {nickname}")
-            broadcast(f"{nickname} joined the chat!".encode('ascii'))
-
-            thread = threading.Thread(target=handle, args=(client,))
-            thread.start()
-
-        except Exception as e:
-            print(f"error with client {address}: {e}")
+            message = client.recv(1024).decode('ascii')
+            if message == 'NICKNAME':
+                client.send(nickname.encode('ascii'))
+            else:
+                print(message)
+        except:
+            print("Disconnected from server")
             client.close()
-
-
-
+            break
 
 def write():
     while True:
-        message = f'{nickname}: {input("")}'
-        client.send(message.encode('ascii'))
-        receive_thread = threading.Thread(target=receive)
-        receive_thread.start()
+        message = input("")
+        client.send(f'{nickname}: {message}'.encode('ascii'))
 
-        write_thread = threading.Thread(target = write)
-        write_thread.start()
+receive_thread = threading.Thread(target=receive)
+receive_thread.daemon = True
+receive_thread.start()
+
+write_thread = threading.Thread(target=write)
+write_thread.daemon = True
+write_thread.start()
+
+receive_thread.join()
