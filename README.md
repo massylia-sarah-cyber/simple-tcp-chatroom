@@ -27,7 +27,7 @@ No additional libraries required (uses only built-in modules)
 Installation
 
 Clone the repository:
-git clone https://github.com/yourusername/chat-application.git
+https://github.com/massylia-sarah-cyber/simple-tcp-chatroom.git
 cd chat-application
 
 No installation needed - the application uses only Python's standard library!
